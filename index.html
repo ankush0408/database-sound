@@ -507,14 +507,13 @@
             chartInstance.destroy();
         }
         
-        // Prepare labels and data
-        const labels = data.map(item => item.timestamp.toLocaleString());
+        // Prepare data (no labels needed)
         const values = data.map(item => item.value);
         
         chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels,
+                labels: Array(data.length).fill(''), // Empty labels
                 datasets: [{
                     label: `${channelConfig.name} - ${document.getElementById('fieldSelect').value}`,
                     data: values,
@@ -531,15 +530,9 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: {
-                        type: 'category',
-                        title: {
-                            display: true,
-                            text: 'Timestamp'
-                        },
-                        ticks: {
-                            autoSkip: true,
-                            maxRotation: 45,
-                            minRotation: 45
+                        display: false, // Hide x-axis completely
+                        grid: {
+                            display: false
                         }
                     },
                     y: {
@@ -556,7 +549,7 @@
                                 return `Value: ${context.parsed.y}`;
                             },
                             afterLabel: function(context) {
-                                return `Time: ${context.label}`;
+                                return `Time: ${currentData[context.dataIndex].timestamp.toLocaleString()}`;
                             }
                         }
                     },
@@ -574,6 +567,10 @@
                             enabled: true,
                             mode: 'xy'
                         }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top'
                     }
                 },
                 animation: {
